@@ -1,6 +1,5 @@
 import { User } from "../models/user.js"
 import bcryptjs from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import { generateToken } from "../utility/generateToken.js"
 
 
@@ -32,15 +31,48 @@ export const signupHandler = async (req,res) => {
 
        await user.save()
 
-       generateToken(user._id)
+       const token = generateToken(user._id)
 
        return res.status(200).json({
         message:"User registered successfully",
-        token:token
+        token
        })
 
 
     } catch (error) {
         console.error(error)
     }
+}
+
+export const signinHandler = async (req,res) => {
+    const {email,password} = req.body
+
+    if(!email || !password){
+        return res.json({
+            message:"All fields are required"
+        })
+    }
+
+    const userExists = await User.find({email})
+
+    if(!userExists){
+        return res.json({
+            message:"Invalid credentials"
+        })
+    }
+
+    const verifyPassword = bcryptjs.compare(password,userExists.password)
+
+    if(!verifyPassword){
+        return res.json({
+            message:"Invalid credentials"
+        })
+    }
+
+    const token = generateToken(userExists._id)
+
+    return res.status(200).json({
+        message:"Login successfully",
+        token
+    })
 }
