@@ -1,22 +1,20 @@
 import mongoose from 'mongoose'
 
 const ticketSchema = new mongoose.Schema({
-    ticketName:{
-        type:String
-    },
-    amount:{
-        type:String
-    },
-    stage:{
-        type:String,
-        
-    },
-    closingDate:{
-        type:Date,
-    },
-    contact_name:{
+    user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
+    },
+    eventName:String,
+    eventId:String,
+    subject:String,
+    amount:Number,
+    source:String,
+    purchasedDate:Date,
+    status:{
+        type:String,
+        enum:['confirmed','cancelled'],
+        default:'confirmed'
     }
 },{
     timestamps:true

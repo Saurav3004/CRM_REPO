@@ -15,10 +15,21 @@ const userSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    password:{
-        type:String,
-        required:true
+    location:{
+        type:String
+    },
+    dob:{
+        type:Date
+    },
+    totalSpent:{
+        type:Number,
+        default:0
+    },
+    ticket:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Ticket"
     }
+
 },{
     timestamps:true
 })

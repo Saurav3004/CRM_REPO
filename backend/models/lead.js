@@ -1,31 +1,21 @@
 import mongoose from "mongoose";
 
 const leadSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    phone_number:{
-        type:Number,
-        required:true
-    },
-    status:{
-        type:String,
-        enum:["New","Contacted","Qualified","Lost"],
-        default:"New"
-    },
-    source:{
-        type:String
-    },
-    assignedTo:{
+    user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
+    status:{
+        type:String,
+        enum:["raw","new","Qualified","contacted"],
+        default:"raw"
+    },
+    source:{
+        type:String,
+        required:false
+    },
+    addedBy:String,
+    notes:String,
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
@@ -33,5 +23,13 @@ const leadSchema = new mongoose.Schema({
 },{
     timestamps:true
 })
+
+// leadSchema.pre('save',async function (next) {
+//     if(!this.uid){
+//         let isUnique = false;
+//         let generatedIdentifier;
+
+//     }
+// })
 
 export const Lead = mongoose.model("Lead",leadSchema)

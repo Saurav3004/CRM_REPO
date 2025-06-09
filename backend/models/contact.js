@@ -1,24 +1,21 @@
 import mongoose from "mongoose";
 
 const contactSchema = new mongoose.Schema({
-    firstName:String,
-    lastName:String,
-    email:{
-        type:String,
-        unique:true
-    },
-    phone_number:{
-        type:Number,
-        unique:true
-    },
-    accountId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Account"
-    },
-    createdBy:{
+    user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
-    }
+    },
+    type:{
+        type:String,
+        enum:['artist','fan','VIP','general'],
+        default:'general'
+    },
+    communication:{
+        email:Boolean,
+        sms:Boolean,
+        whatsapp:Boolean
+    },
+    tags:[String]
 },{
     timestamps:true
 })

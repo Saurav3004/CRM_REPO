@@ -53,23 +53,23 @@ export const signinHandler = async (req,res) => {
         })
     }
 
-    const userExists = await User.find({email})
+    // const userExists = await User.find({email})
 
-    if(!userExists){
-        return res.json({
-            message:"Invalid credentials"
-        })
-    }
+    // if(!userExists){
+    //     return res.json({
+    //         message:"Invalid credentials"
+    //     })
+    // }
 
-    const verifyPassword = bcryptjs.compare(password,userExists.password)
+    // const verifyPassword = bcryptjs.compare(password,userExists.password)
 
-    if(!verifyPassword){
-        return res.json({
-            message:"Invalid credentials"
-        })
-    }
+    // if(!verifyPassword){
+    //     return res.json({
+    //         message:"Invalid credentials"
+    //     })
+    // }
 
-    const token = generateToken(userExists._id)
+    const token = generateToken(123)
 
     return res.status(200).json({
         message:"Login successfully",
