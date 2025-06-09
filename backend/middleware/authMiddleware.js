@@ -1,27 +1,27 @@
-import jwt from 'jsonwebtoken'
-import { User } from '../models/user.js';
+import jwt from 'jsonwebtoken';
+import { Admin } from '../models/admin.js';
 
-const middleware = async (req,res,next) => {
-    
-        let token = req.headers.authorization?.split(" ")[1];
+export const authMiddleware = async (req, res, next) => {
+    try {
+        let token = req.headers.authorization;
 
-        if(!token){
-            return res.status(401).json({
-                message:"You are not authorized"
-            })
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        console.log(decoded)
+
+        const user = await Admin.findById(decoded.id).select("-password");
+
+        console.log(user)
+
+        if (!user) {
+            return res.status(401).json({ message: "User not found" });
         }
-        try{
 
-            const decoded = jwt.verify(token,process.env.JWT_SECRET);
-
-            const user = await User.findById(decoded.id).select("-password")
-
-            req.user = user
-            next()
+        req.user = user;
+        next();
 
     } catch (error) {
-        console.log("Not authorized")
+        console.error("JWT Error:", error.message);
+        res.status(401).json({ message: "You are not authorized" });
     }
 }
-
-export default middleware

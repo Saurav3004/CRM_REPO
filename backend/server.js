@@ -2,18 +2,27 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { connectDB } from './config/db.js'
-import authRoutes from './routes/userRoute.js'
+import authRoutes from './routes/authRoute.js'
 import dashboardRoute from './routes/dashboardRoute.js'
+import bookingRoute from './routes/bookingRoute.js'
+import leadRoute from './routes/leadRoute.js'
 
 const app = express()
-app.use(express.json())
 dotenv.config()
+app.use(cors({
+    origin:process.env.FRONTEND_URL,
+    methods:['GET','PUT','POST','DELETE'],
+    credentials:true
+}))
+app.use(express.json())
 
 const PORT = process.env.PORT || 3000
 connectDB()
 
 app.use('/api/auth',authRoutes)
 app.use('/api/dashboard',dashboardRoute)
+app.use('/api/ticket',bookingRoute)
+app.use('/api/leads',leadRoute)
 
 app.listen(PORT,() => {
     console.log(`app is running at port ${PORT}`)

@@ -7,7 +7,7 @@ const leadSchema = new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["raw","new","Qualified","contacted"],
+        enum:["raw","qualified","contacted",'converted'],
         default:"raw"
     },
     source:{
@@ -24,12 +24,6 @@ const leadSchema = new mongoose.Schema({
     timestamps:true
 })
 
-// leadSchema.pre('save',async function (next) {
-//     if(!this.uid){
-//         let isUnique = false;
-//         let generatedIdentifier;
 
-//     }
-// })
 
 export const Lead = mongoose.model("Lead",leadSchema)

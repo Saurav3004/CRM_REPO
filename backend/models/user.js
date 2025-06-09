@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    fullname:{
+    name:{
         type:String,
         required:true
     },
@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-    ticket:{
+    tickets:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Ticket"
-    }
+    }]
 
 },{
     timestamps:true

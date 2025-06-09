@@ -1,26 +1,31 @@
 import { Lead } from "../models/lead.js";
+import { Contact } from "../models/contact.js";
 
-export const leadHandler = async (req,res) => {
-    try {
-        const {name,email,phone,source,status} = req.body;
-    
-        if(!name || !email || !phone || !source || !status){
-            return res.status(401).json({
-                message:"All fields are required"
-            })
-        }
-    
-        const lead = await Lead.create({
-            name,
-            email,
-            phone_number:phone,
-            source,
-            status,
-            createdBy:req.user._id
-        })
-    
-        res.status(200).json(lead)
-    } catch (error) {
-        console.log(error)
+export const leadHandler = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const { leadId } = req.params;
+
+    const lead = await Lead.findOne({ leadId }).populate("user");
+
+    if (!lead) return res.status(404).json({ message: "Lead not found" });
+
+    lead.status = status || lead.status;
+    await lead.save();
+
+    if (status === "qualified") {
+      // Check if contact already exists to avoid duplicates
+      const existingContact = await Contact.findOne({ user: lead.user._id });
+      if (!existingContact) {
+        await Contact.create({ user: lead.user._id, source: lead.source });
+      }
+      lead.status = "converted";
+      await lead.save();
     }
-}
+
+    res.json({ message: "Lead updated", lead });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -1,40 +1,40 @@
-import { User } from "../models/user.js"
 import bcryptjs from 'bcryptjs'
 import { generateToken } from "../utility/generateToken.js"
+import { Admin } from "../models/admin.js"
 
 
 export const signupHandler = async (req,res) => {
     try {
-        const {email,password,fullname,phone_number} = req.body
-        if(!email || !password || !fullname || !phone_number){
+        const {name,email,password} = req.body
+        if(!email || !password || !name ){
             return res.json({
                 message:"All fields are required "
             })
         }
-        const existingUser = await User.findOne({email})
+        const existingUser = await Admin.findOne({email})
 
         if(existingUser){
             return res.json({
-                message:"User already registered"
+                message:"Admin already exist"
             })
         }
 
-        const hashedPassword = bcryptjs.hash(password,10)
+        const hashedPassword = await bcryptjs.hash(password,10)
 
 
-        const user = await User.create({
+        const admin = await Admin.create({
+            name,
             email,
-            password:hashedPassword,
-            fullname,
-            phone_number
+            password:hashedPassword
+            
         })
 
-       await user.save()
+       await admin.save()
 
-       const token = generateToken(user._id)
+       const token = generateToken(admin._id)
 
        return res.status(200).json({
-        message:"User registered successfully",
+        message:"Admin created successfully",
         token
        })
 
@@ -47,32 +47,41 @@ export const signupHandler = async (req,res) => {
 export const signinHandler = async (req,res) => {
     const {email,password} = req.body
 
-    if(!email || !password){
-        return res.json({
-            message:"All fields are required"
+    try {
+        if(!email || !password){
+            return res.json({
+                message:"All fields are required"
+            })
+        }
+    
+        const adminExists = await Admin.findOne({email})
+        console.log(adminExists)
+    
+        if(!adminExists){
+            return res.json({
+                message:"Invalid credentials"
+            })
+        }
+
+        console.log( adminExists.password)
+    
+        const verifyPassword =  bcryptjs.compare(password,adminExists.password)
+    
+        if(!verifyPassword){
+            return res.json({
+                message:"Invalid credentials"
+            })
+        }
+    
+        const token = generateToken(adminExists)
+    
+        return res.status(200).json({
+            message:"Login successfully",
+            token
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:error.message
         })
     }
-
-    // const userExists = await User.find({email})
-
-    // if(!userExists){
-    //     return res.json({
-    //         message:"Invalid credentials"
-    //     })
-    // }
-
-    // const verifyPassword = bcryptjs.compare(password,userExists.password)
-
-    // if(!verifyPassword){
-    //     return res.json({
-    //         message:"Invalid credentials"
-    //     })
-    // }
-
-    const token = generateToken(123)
-
-    return res.status(200).json({
-        message:"Login successfully",
-        token
-    })
 }
