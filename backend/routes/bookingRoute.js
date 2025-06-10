@@ -1,9 +1,10 @@
 import express from 'express';
-import { bookingHandler } from '../controllers/bookingController.js';
+import { confirmTicket, initiateBooking } from '../controllers/bookingController.js';
 
 const router = express.Router()
 
-router.post('/booking',bookingHandler)
+router.post('/initiate-booking',initiateBooking)
+router.post('/confirm',confirmTicket)
 
 
 export default router

@@ -1,8 +1,9 @@
 import { User } from "../models/user.js";
 import { Lead } from "../models/lead.js";
-import { Ticket } from "../models/ticket.js";
+import {Ticket} from '../models/ticket.js'
 
-export const bookingHandler = async (req, res) => {
+
+export const initiateBooking = async (req, res) => {
   try {
     const {
       name,
@@ -10,16 +11,12 @@ export const bookingHandler = async (req, res) => {
       phone_number,
       location,
       dob,
-      eventName,
       eventId,
-      subject,
+      eventName,
+      source,
       amount,
-      source
+      subject
     } = req.body;
-
-    // Decide status based on amount (payment logic)
-    const confirmed = amount && Number(amount) > 0;
-    const ticketStatus = confirmed ? "confirmed" : "pending";
 
     // 1. Find or create user
     let user = await User.findOne({ email });
@@ -31,51 +28,64 @@ export const bookingHandler = async (req, res) => {
         phone_number,
         location,
         dob,
-        totalSpent: confirmed ? amount : 0
-      });
-    } else {
-      if (confirmed) {
-        user.totalSpent += amount;
-        await user.save();
-      }
+        totalSpent:0
+      })
     }
-
-    // 2. Create ticket
-    const ticket = await Ticket.create({
-      user: user._id,
-      eventName,
-      eventId,
-      subject,
-      amount,
-      source,
-      purchasedDate: Date.now(),
-      status: ticketStatus
-    });
-
-    // 3. Push ticket to user's ticket array
-    user.tickets.push(ticket._id);
-    await user.save();
-
+    
+    
     // 4. Create lead if not already
     let lead = await Lead.findOne({ user: user._id });
     if (!lead) {
-      lead = await Lead.create({
-        user: user._id,
-        source,
-        tag: "new",
-        location: user.location
-      });
+     lead = await Lead.create({ user: user._id, source, tag: 'new',location:user.location });
     }
 
     res.status(201).json({
-      message: `Ticket ${ticketStatus}, lead created`,
+      message: "Ticket booked, user updated",
       user,
-      ticket,
+      
       lead
     });
-
   } catch (err) {
     console.error("Booking Error:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const confirmTicket = async (req,res) => {
+  try {
+    const {email,eventName,eventId,subject,amount,source,purchasedDate} = req.body
+
+    const user = await User.findOne({email})
+
+    if(!user) return res.status(404).json({
+      message:"User not found"
+    })
+
+    user.totalSpent += amount;
+    await user.save()
+
+    const ticket = Ticket.create({
+      user:user._id,
+      eventName,
+      eventId,
+      subject,
+      amount,
+      purchasedDate,
+      source,
+      status:'confirmed'
+    })
+
+    user.tickets.push(ticket._id)
+    await user.save()
+
+    res.status(201).json({
+      message:"Ticket confirmed",
+      ticket
+    })
+
+
+  } catch (error) {
+    res.status(500).json({message:"Internal server error"})
+  }
+}
