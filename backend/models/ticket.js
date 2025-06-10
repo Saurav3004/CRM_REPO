@@ -13,8 +13,8 @@ const ticketSchema = new mongoose.Schema({
     purchasedDate:Date,
     status:{
         type:String,
-        enum:['confirmed','cancelled'],
-        default:'confirmed'
+        enum:['confirmed','cancelled','pending'],
+        default:'pending'
     }
 },{
     timestamps:true

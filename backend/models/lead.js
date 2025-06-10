@@ -14,6 +14,7 @@ const leadSchema = new mongoose.Schema({
         type:String,
         required:false
     },
+    location:String,
     addedBy:String,
     notes:String,
     createdBy:{

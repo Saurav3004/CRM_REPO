@@ -9,11 +9,7 @@ import leadRoute from './routes/leadRoute.js'
 
 const app = express()
 dotenv.config()
-app.use(cors({
-    origin:process.env.FRONTEND_URL,
-    methods:['GET','PUT','POST','DELETE'],
-    credentials:true
-}))
+app.use(cors())
 app.use(express.json())
 
 const PORT = process.env.PORT || 3000

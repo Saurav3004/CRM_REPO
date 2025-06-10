@@ -1,7 +1,6 @@
 import { User } from "../models/user.js";
 import { Lead } from "../models/lead.js";
-import {Ticket} from '../models/ticket.js'
-
+import { Ticket } from "../models/ticket.js";
 
 export const bookingHandler = async (req, res) => {
   try {
@@ -15,9 +14,12 @@ export const bookingHandler = async (req, res) => {
       eventId,
       subject,
       amount,
-      source,
-      
+      source
     } = req.body;
+
+    // Decide status based on amount (payment logic)
+    const confirmed = amount && Number(amount) > 0;
+    const ticketStatus = confirmed ? "confirmed" : "pending";
 
     // 1. Find or create user
     let user = await User.findOne({ email });
@@ -29,11 +31,13 @@ export const bookingHandler = async (req, res) => {
         phone_number,
         location,
         dob,
-        totalSpent: amount // Initial amount
+        totalSpent: confirmed ? amount : 0
       });
     } else {
-      user.totalSpent += amount;
-      await user.save();
+      if (confirmed) {
+        user.totalSpent += amount;
+        await user.save();
+      }
     }
 
     // 2. Create ticket
@@ -44,7 +48,8 @@ export const bookingHandler = async (req, res) => {
       subject,
       amount,
       source,
-      purchasedDate:Date.now()
+      purchasedDate: Date.now(),
+      status: ticketStatus
     });
 
     // 3. Push ticket to user's ticket array
@@ -52,17 +57,23 @@ export const bookingHandler = async (req, res) => {
     await user.save();
 
     // 4. Create lead if not already
-    const lead = await Lead.findOne({ user: user._id });
+    let lead = await Lead.findOne({ user: user._id });
     if (!lead) {
-      await Lead.create({ user: user._id, source, tag: 'new' });
+      lead = await Lead.create({
+        user: user._id,
+        source,
+        tag: "new",
+        location: user.location
+      });
     }
 
     res.status(201).json({
-      message: "Ticket booked, user updated",
+      message: `Ticket ${ticketStatus}, lead created`,
       user,
       ticket,
       lead
     });
+
   } catch (err) {
     console.error("Booking Error:", err);
     res.status(500).json({ message: "Internal server error" });
