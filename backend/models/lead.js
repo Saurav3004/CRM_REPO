@@ -14,9 +14,12 @@ const leadSchema = new mongoose.Schema({
         type:String,
         required:false
     },
+    email:String,
+    phone_number:Number,
     location:String,
     addedBy:String,
     notes:String,
+    eventName:String,
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"

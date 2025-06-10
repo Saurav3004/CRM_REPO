@@ -11,11 +11,9 @@ export const initiateBooking = async (req, res) => {
       phone_number,
       location,
       dob,
-      eventId,
-      eventName,
+      
       source,
-      amount,
-      subject
+      
     } = req.body;
 
     // 1. Find or create user
@@ -35,8 +33,9 @@ export const initiateBooking = async (req, res) => {
     
     // 4. Create lead if not already
     let lead = await Lead.findOne({ user: user._id });
+    
     if (!lead) {
-     lead = await Lead.create({ user: user._id, source, tag: 'new',location:user.location });
+     lead = await Lead.create({ user: user._id, source, tag: 'new',location:user.location,email:user.email,phone_number:user.phone_number });
     }
 
     res.status(201).json({
@@ -62,11 +61,18 @@ export const confirmTicket = async (req,res) => {
       message:"User not found"
     })
 
+    if(amount == null){
+      return;
+    }
+
     user.totalSpent += amount;
     await user.save()
 
-    const ticket = Ticket.create({
+   
+
+    const ticket = await Ticket.create({
       user:user._id,
+      name:user.name,
       eventName,
       eventId,
       subject,
@@ -76,6 +82,7 @@ export const confirmTicket = async (req,res) => {
       status:'confirmed'
     })
 
+    
     user.tickets.push(ticket._id)
     await user.save()
 

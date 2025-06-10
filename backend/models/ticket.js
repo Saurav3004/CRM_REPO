@@ -5,6 +5,7 @@ const ticketSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
+    name:String,
     eventName:String,
     eventId:String,
     subject:String,
