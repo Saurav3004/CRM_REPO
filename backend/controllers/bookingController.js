@@ -16,7 +16,7 @@ export const bookingHandler = async (req, res) => {
       subject,
       amount,
       source,
-      purchasedDate
+      
     } = req.body;
 
     // 1. Find or create user
@@ -44,7 +44,7 @@ export const bookingHandler = async (req, res) => {
       subject,
       amount,
       source,
-      purchasedDate
+      purchasedDate:Date.now()
     });
 
     // 3. Push ticket to user's ticket array
@@ -60,7 +60,8 @@ export const bookingHandler = async (req, res) => {
     res.status(201).json({
       message: "Ticket booked, user updated",
       user,
-      ticket
+      ticket,
+      lead
     });
   } catch (err) {
     console.error("Booking Error:", err);
