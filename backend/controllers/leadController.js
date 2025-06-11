@@ -29,3 +29,19 @@ export const leadHandler = async (req, res) => {
     console.log(error);
   }
 };
+
+
+export const getAllLeads = async (req,res) => {
+  try {
+    const allLeads = await Lead.find();
+
+    res.status(200).json({
+      message:"All leads are here",
+      allLeads
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:error.message
+    })
+  }
+}

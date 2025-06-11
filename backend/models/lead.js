@@ -5,6 +5,11 @@ const leadSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
+    name:String,
+    gender:{
+        type:String,
+        required:true
+    },
     status:{
         type:String,
         enum:["raw","qualified","contacted",'converted'],
@@ -20,6 +25,8 @@ const leadSchema = new mongoose.Schema({
     addedBy:String,
     notes:String,
     eventName:String,
+    totalSpent:Number,
+    dob:Date,
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"

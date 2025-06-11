@@ -1,6 +1,7 @@
 import { User } from "../models/user.js";
 import { Lead } from "../models/lead.js";
 import {Ticket} from '../models/ticket.js'
+import { Contact } from "../models/contact.js";
 
 
 export const initiateBooking = async (req, res) => {
@@ -11,7 +12,7 @@ export const initiateBooking = async (req, res) => {
       phone_number,
       location,
       dob,
-      
+      gender,
       source,
       
     } = req.body;
@@ -26,6 +27,7 @@ export const initiateBooking = async (req, res) => {
         phone_number,
         location,
         dob,
+        gender,
         totalSpent:0
       })
     }
@@ -35,7 +37,7 @@ export const initiateBooking = async (req, res) => {
     let lead = await Lead.findOne({ user: user._id });
     
     if (!lead) {
-     lead = await Lead.create({ user: user._id, source, tag: 'new',location:user.location,email:user.email,phone_number:user.phone_number });
+     lead = await Lead.create({ user: user._id, source, tag: 'new',location:user.location,email:user.email,phone_number:user.phone_number,totalSpent:user.totalSpent,name:user.name,gender:user.gender,dob:user.dob });
     }
 
     res.status(201).json({
@@ -61,12 +63,16 @@ export const confirmTicket = async (req,res) => {
       message:"User not found"
     })
 
+    const lead = await Lead.findOne({email})
+
     if(amount == null){
       return;
     }
 
     user.totalSpent += amount;
+    lead.totalSpent += amount;
     await user.save()
+    await lead.save()
 
    
 
@@ -86,13 +92,26 @@ export const confirmTicket = async (req,res) => {
     user.tickets.push(ticket._id)
     await user.save()
 
+    const contact = await Contact.findOne({
+      user:user._id
+    })
+
+    if(!contact){
+      await Contact.create({user:user._id,name:user.name,communication:{
+        email:user.email,
+        sms:user.phone_number,
+        whatsapp:user.phone_number
+      }})
+    }
+
     res.status(201).json({
       message:"Ticket confirmed",
-      ticket
+      ticket,
+      contact
     })
 
 
   } catch (error) {
-    res.status(500).json({message:"Internal server error"})
+    res.status(500).json({message:error.message})
   }
 }

@@ -5,17 +5,19 @@ const contactSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
+    name:String,
+    email:String,
+    
     type:{
         type:String,
         enum:['artist','fan','VIP','general'],
         default:'general'
     },
     communication:{
-        email:Boolean,
-        sms:Boolean,
-        whatsapp:Boolean
-    },
-    tags:[String]
+        email:String,
+        sms:Number,
+        whatsapp:Number
+    }
 },{
     timestamps:true
 })
