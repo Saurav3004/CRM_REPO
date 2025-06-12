@@ -1,73 +1,140 @@
-import { useEffect, useState } from "react";
-import { topUsers } from "../constants/topUsers";
-import UserRow from "../utils/UserRow";
-import TableHeader from "../utils/TableHeader";
-import axios from 'axios'
+// src/components/UserTable.jsx
+import React from 'react';
 
+const users = [
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Bleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+  {
+    first: "Eleanor",
+    last:"Dunn",
+    email: "eleanor.dunn@icloud.com",
+    mobile: "0401 006 686",
+    age: 22,
+    city: "Sydney",
+    avatar: "https://i.pravatar.cc/150?img=2"
+  },
+];
 
+const UserCard = ({ searchTerm,filters }) => {
+  const filteredUsers = users.filter((user) => {
+    const matchSearch = [user.first, user.last, user.email, user.mobile, user.city]
+      .some(field => field.toLowerCase().includes(searchTerm.toLowerCase()));
 
+    const matchCity = filters.city === "" || user.city.toLowerCase().includes(filters.city.toLowerCase());
+    const matchAge = filters.age === "" || user.age >= Number(filters.age);
 
-
-const UserCard = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [allLeadsUsers,setAllLeadsUsers] = useState([])
-
-  useEffect(() => {
-    
-    const leads = async () => {
-     try {
-      const response = await axios.get("http://localhost:5000/api/leads/getallleads")
-      console.log(response.data.allLeads)
-      setAllLeadsUsers(response.data.allLeads)
-     } catch (error) {
-      console.log(error)
-     }
-    }
-    // console.log(leads)
-    return leads
-  },[])
-
-  const handleTagSelection = async (userId, tag) => {
-    try {
-      const res = await fetch(`/api/users/${userId}/tag-and-contact`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag }),
-      });
-
-      const result = await res.json();
-      alert(result.message);
-    } catch (error) {
-      console.error("Error tagging user:", error);
-      alert("Error tagging user");
-    }
-  };
+    return matchSearch && matchCity && matchAge;
+  })
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">All Leads</h1>
-
-      {allLeadsUsers.length > 0 ? <div className="overflow-x-auto">
-        <table className="min-w-[1300px] w-full bg-white rounded-lg shadow border">
-          <TableHeader />
-          <tbody className="text-gray-700 text-sm font-light">
-            {allLeadsUsers?.map((user, index) => (
-              <UserRow
-                key={index}
-                user={user}
-                onTagChange={handleTagSelection}
-                onSelect={setSelectedUser}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div> : (
-        <div>
-          <h1>There are no leads</h1>
-        </div>
-      )}
+    <div className="overflow-x-auto bg-white rounded-md shadow border">
+      <table className="min-w-[1200px] text-sm text-gray-700">
+        <thead className="bg-gray-100 text-left text-xs text-gray-500 uppercase">
+          <tr>
+            <th className="px-8 py-4"><input type="checkbox" /></th>
+            <th className="p-4 min-w-[150px]">Firstname</th>
+            <th className="p-4 min-w-[150px]">Lastname</th>
+            <th className="p-4 min-w-[250px]">Email</th>
+            <th className="p-4 min-w-[180px]">Mobile</th>
+            <th className="p-4 min-w-[80px]">Age</th>
+            <th className="p-4 min-w-[150px]">City</th>
+            <th className="p-4 min-w-[150px]">City</th>
+            <th className="p-4 min-w-[150px]">City</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUsers.map((u, idx) => (
+            <tr key={idx} className="border-t hover:bg-gray-50">
+              <td className="px-8 py-4"><input type="checkbox" /></td>
+              <td className="p-4 flex items-center gap-2">
+                <img src={u.avatar} className="w-8 h-8 rounded-full" />
+                {u.first}
+              </td>
+              <td className="p-4">{u.last}</td>
+              <td className="p-4">{u.email}</td>
+              <td className="p-4">{u.mobile}</td>
+              <td className="p-4">{u.age}</td>
+              <td className="p-4">{u.city}</td>
+              <td className="p-4">{u.city}</td>
+              <td className="p-4">{u.city}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
+
+
 
 export default UserCard;

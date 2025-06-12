@@ -24,7 +24,7 @@ const UserRow = ({ user, onTagChange, onSelect }) => {
       <td className="py-5 px-6 font-semibold whitespace-nowrap">{new Date(dob).toLocaleString().split(',')[0]}</td>
       <td className="py-5 px-6 font-semibold whitespace-nowrap">{gender || "Null"}</td>
       <td className="py-5 px-6 font-semibold whitespace-nowrap">
-        ₹{totalSpent}
+        ₹ {totalSpent}
       </td>
       <td className="py-5 px-6 font-semibold whitespace-nowrap">{music || "Null"}</td>
       <td className="py-5 px-6 font-semibold whitespace-nowrap">
