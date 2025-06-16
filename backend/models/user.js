@@ -1,41 +1,28 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    phone_number:{
-        type:Number,
-        required:true,
-        unique:true
-    },
-    gender:{
-        type:String,
-        required:true
-    },
-    location:{
-        type:String
-    },
-    dob:{
-        type:Date
-    },
-    totalSpent:{
-        type:Number,
-        default:0
-    },
-    tickets:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Ticket"
-    }]
+  session: String,
+  regNumber: String,
+  ticketType: String,
+  ticketsCount: {
+    type: Number,
+    default: 0
+  },
+  status: String,
+  fundsStatus: String,
+  price: Number,
+  purchaseAmount: Number,
+  purchasedOn:String,
+  trackingCode: String,
+  discountCode: String,
+  checkedIn: String,
+  firstName: String,
+  lastName: String,
+  email: String,
+  dob: String,
+  reEnterEmail: String,
+  mobile: String,
+  gender: String,
+}, { timestamps: true });
 
-},{
-    timestamps:true
-})
-
-export const User = mongoose.model("User",userSchema)
+export const User = mongoose.model("User", userSchema);
